@@ -1,35 +1,44 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import React, { useState } from "react";
+import { log } from "./logger";
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [url, setUrl] = useState("");
+  const [shortUrl, setShortUrl] = useState("");
+
+  const handleShorten = () => {
+    if (!url.startsWith("http")) {
+      log("frontend", "error", "component", "Invalid URL entered");
+      alert("Please enter a valid URL starting with http");
+      return;
+    }
+
+    const code = Math.random().toString(36).substring(2, 7);
+    const newShortUrl = `http://localhost:3000/${code}`;
+    setShortUrl(newShortUrl);
+
+    log("frontend", "info", "component", `Shortened URL: ${url} -> ${newShortUrl}`);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div style={{ padding: "20px", fontFamily: "Arial" }}>
+      <h2>Simple URL Shortener</h2>
+      <input
+        type="text"
+        placeholder="Enter URL"
+        value={url}
+        onChange={(e) => setUrl(e.target.value)}
+        style={{ padding: "8px", width: "300px", marginRight: "10px" }}
+      />
+      <button onClick={handleShorten} style={{ padding: "8px 12px" }}>
+        Shorten
+      </button>
 
-export default App
+      {shortUrl && (
+        <div style={{ marginTop: "20px" }}>
+          <p><strong>Short URL:</strong> <a href={url}>{shortUrl}</a></p>
+        </div>
+      )}
+    </div>
+  );
+}
